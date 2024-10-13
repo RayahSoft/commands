@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Command Reference</title>
+	<link rel="icon" class="js-site-favicon" type="image/svg+xml" href="https://github.githubassets.com/favicons/favicon.svg">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f5f7fa;
+            --text-color: #34495e;
+            --card-background: #ffffff;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+        }
+        .search-container {
+            margin-bottom: 30px;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid var(--primary-color);
+            border-radius: 5px;
+        }
+        .category {
+            margin-bottom: 40px;
+        }
+        .category-title {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .command-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        .command-card:hover {
+            transform: translateY(-5px);
+        }
+        .command-title {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        .command-syntax {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .command-description {
+            margin-top: 10px;
+            color: var(--text-color);
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Git Command Reference</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for Git commands...">
+        </div>
+        <div id="commandList">
+            <!-- Command categories and cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        const gitCommands = [
+            {
+                category: "Basic Commands",
+                commands: [
+                    { name: "Initialize a new Git repository", syntax: "git init", description: "Initializes a new local Git repository in the current directory." },
+                    { name: "Clone an existing repository", syntax: "git clone <repository-url>", description: "Downloads a repository from a remote server to your local machine." },
+                    { name: "Show the current status of files", syntax: "git status", description: "Displays the state of the working directory and staging area." },
+                    { name: "Stage changes to be committed (for a specific file)", syntax: "git add <file>", description: "Adds changes in <file> to the staging area." },
+                    { name: "Stage all changes to be committed", syntax: "git add .", description: "Adds all changes (new, modified, deleted) to the staging area." },
+                    { name: "Commit changes with a message", syntax: "git commit -m \"commit message\"", description: "Records the changes in the repository with a message describing the changes." },
+                    { name: "Push changes to the remote repository", syntax: "git push <remote> <branch>", description: "Sends the committed changes from the local branch to the remote repository." },
+                    { name: "Pull changes from the remote repository", syntax: "git pull", description: "Fetches and merges changes from the remote branch to the current branch." },
+                ]
+            },
+            {
+                category: "Branch Management",
+                commands: [
+                    { name: "Create a new branch", syntax: "git branch <branch-name>", description: "Creates a new branch called <branch-name>." },
+                    { name: "List all branches", syntax: "git branch", description: "Lists all branches in the repository, highlighting the current branch." },
+                    { name: "Switch to another branch", syntax: "git checkout <branch-name>", description: "Switches to the specified branch." },
+                    { name: "Merge another branch into the current branch", syntax: "git merge <branch-name>", description: "Merges the specified branch into the current branch." },
+                ]
+            },
+            {
+                category: "History and Logs",
+                commands: [
+                    { name: "Show commit history", syntax: "git log", description: "Displays a list of commits made in the repository." },
+                    { name: "Rebase the current branch onto another branch", syntax: "git rebase <branch-name>", description: "Reapplies commits on top of another base tip." },
+                ]
+            },
+            {
+                category: "Configuration",
+                commands: [
+                    { name: "Show all Git configurations", syntax: "git config --list", description: "Displays a list of Git configuration settings." },
+                    { name: "Set a Git username", syntax: "git config user.name \"Your Name\"", description: "Sets the username for the current Git repository." },
+                ]
+            },
+            {
+                category: "Cleaning and Maintenance",
+                commands: [
+                    { name: "Clean untracked files from the working directory", syntax: "git clean -f", description: "Removes all untracked files from the working directory." },
+                ]
+            },
+            {
+                category: "Stash Management",
+                commands: [
+                    { name: "Stash changes", syntax: "git stash", description: "Temporarily saves your changes in a stash and reverts to the last committed state." },
+                    { name: "Stash with a custom name", syntax: "git stash save \"stash description\"", description: "Saves the stash with a custom name for easier identification." },
+                    { name: "Apply a specific stash", syntax: "git stash apply stash@{index}", description: "Applies the specified stash (use stash@{0} for the latest stash)." },
+                    { name: "Pop a specific stash", syntax: "git stash pop stash@{index}", description: "Applies and removes the specified stash (use stash@{0} for the latest stash)." },
+                    { name: "List all stashes", syntax: "git stash list", description: "Displays a list of all stashed changes, with their index (e.g., stash@{0})." },
+                    { name: "Show stash details", syntax: "git stash show stash@{index}", description: "Displays the changes in a specific stash (use stash@{0} for the latest stash)." },
+                    { name: "Drop a specific stash", syntax: "git stash drop stash@{index}", description: "Deletes the specified stash (use stash@{0} for the latest stash)." },
+                ]
+            },
+            {
+                category: "Tags and Releases",
+                commands: [
+                    { name: "List all tags", syntax: "git tag", description: "Lists all tags in the repository." },
+                    { name: "Create a new tag", syntax: "git tag -a <tag-name> -m \"tag message\"", description: "Creates a new annotated tag named <tag-name> with a message." },
+                    { name: "View tag details", syntax: "git show <tag-name>", description: "Shows details of a specific tag, including the commit it points to." },
+                    { name: "Delete a tag", syntax: "git tag -d <tag-name>", description: "Deletes the specified tag locally." },
+                    { name: "Push a tag to remote", syntax: "git push origin <tag-name>", description: "Pushes a specific tag to the remote repository." },
+                    { name: "Push all tags to remote", syntax: "git push origin --tags", description: "Pushes all local tags to the remote repository." },
+                    { name: "Delete a remote tag", syntax: "git push origin :refs/tags/<tag-name>", description: "Deletes a tag from the remote repository." },
+                ]
+            },
+            {
+                category: "GitHub-specific Commands",
+                commands: [
+                    { name: "Draft a release (GitHub CLI)", syntax: "gh release create <tag-name> --title \"Release Title\" --notes \"Release Notes\"", description: "Creates a new release using the GitHub CLI, associating it with a tag." },
+                ]
+            },
+            {
+                category: "Git Ignore Patterns",
+                commands: [
+                    { name: "Common .gitignore patterns", syntax: `
+# Ignore all files in node_modules/ directory
+node_modules/
+
+# Ignore all .log files
+*.log
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore compiled files
+*.class
+*.o
+*.out
+
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+
+# Ignore environment files
+.env
+
+# Ignore all .zip, .tar, and .gz files
+*.zip
+*.tar.gz
+*.gz
+
+# Ignore compiled CSS and JS (if using preprocessors like SASS or TypeScript)
+*.css.map
+*.js.map
+
+# Ignore macOS specific file
+.AppleDouble
+.LSOverride
+
+# Ignore Visual Studio Code settings folder
+.vscode/
+
+# Ignore any file ending in .bak (backup files)
+*.bak
+
+# Ignore temporary files like .swp or .swo from text editors (e.g., Vim)
+*.swp
+*.swo
+
+# Ignore npm debug log
+npm-debug.log*
+
+# Ignore idea files (IntelliJ)
+.idea/
+
+# Ignore Laravel storage and vendor directories
+storage/
+vendor/
+
+# Ignore coverage reports (often created by test suites)
+coverage/
+
+# Ignore build directories (common for projects with build systems)
+build/
+dist/
+
+# Ignore temporary IDE files (JetBrains, Sublime, etc.)
+*.iml
+*.sublime-workspace
+*.sublime-project`, description: "These patterns help Git ignore specific files and folders. Add these patterns to your .gitignore file in the root of your repository." },
+                ]
+            },
+        ];
+
+        function renderCommands(commands) {
+            const commandList = document.getElementById('commandList');
+            commandList.innerHTML = '';
+
+            commands.forEach(category => {
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'category';
+                categoryElement.innerHTML = `<h2 class="category-title">${category.category}</h2>`;
+
+                category.commands.forEach(command => {
+                    const commandCard = document.createElement('div');
+                    commandCard.className = 'command-card';
+                    commandCard.innerHTML = `
+                        <h3 class="command-title">${command.name}</h3>
+                        <pre class="command-syntax">${command.syntax}</pre>
+                        <p class="command-description">${command.description}</p>
+                    `;
+                    categoryElement.appendChild(commandCard);
+                });
+
+                commandList.appendChild(categoryElement);
+            });
+        }
+
+        function filterCommands(searchTerm) {
+            const filteredCommands = gitCommands.map(category => ({
+                ...category,
+                commands: category.commands.filter(command =>
+                    command.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    command.syntax.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    command.description.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+            })).filter(category => category.commands.length > 0);
+
+            renderCommands(filteredCommands);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            filterCommands(e.target.value);
+        });
+
+        // Initial render
+        renderCommands(gitCommands);
+    </script>
+</body>
+</html>
